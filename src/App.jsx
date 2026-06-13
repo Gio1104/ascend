@@ -851,7 +851,7 @@ function WeeklyDigest({ state, setState }) {
     const refs = Object.keys(state.checkIns || {}).sort().slice(-7).map((d) => (state.checkIns[d]._qa && state.checkIns[d]._qa[0]) || state.checkIns[d]._reflection).filter(Boolean).slice(-5);
     const sys = `Você é o coach do Giovanni (Gio), que mira carreira em private equity (EQT/Advent) e impacto. Escreva o RESUMO DA SEMANA dele: curto, honesto, tom de mentor no time dele. Dados — score agora ${Math.round(now)} (7 dias atrás ${Math.round(then)}); por área ${JSON.stringify(cats)}; check-ins na semana ${ciWk}/7; metas que avançaram ${JSON.stringify(advanced)}; concluídas ${JSON.stringify(completedWk)}; reflexões recentes ${JSON.stringify(refs)}. Responda SOMENTE JSON: {"summary":"2-3 frases sobre como foi a semana","win":"a vitória da semana em 1 frase","focus":"1 foco concreto e específico para a próxima semana"}.`;
     try {
-      const res = await fetch(AI_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 500, system: sys, messages: [{ role: "user", content: "Gere meu resumo da semana." }] }) });
+      const res = await fetch(AI_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 500, system: sys, messages: [{ role: "user", content: "Gere meu resumo da semana." }] }) });
       const data = await res.json();
       let txt = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").replace(/```json|```/g, "").trim();
       const p = JSON.parse(txt);
@@ -941,7 +941,7 @@ function LearnModal({ state, setState, onClose }) {
     const sys = `Você prepara a "pílula de conhecimento do dia" do Giovanni (Gio), 19 anos, estudante de Economia no Insper, mirando carreira em private equity (EQT/Advent) e consultoria. Trilha de hoje: ${LEARN_LABEL(track)} (${trackDesc}). Escolha UM conceito específico e valioso dessa trilha, no nível de alguém ambicioso que já sabe o básico — nada raso. Explique de forma clara, concreta e memorável, em português, com um exemplo real quando ajudar. Evite estes tópicos já vistos: ${JSON.stringify(recentTitles)}.
 Responda SOMENTE JSON válido, sem markdown: {"title":"nome curto do conceito","explanation":"3 a 5 parágrafos curtos separados por \\n\\n","quiz":[{"q":"pergunta","options":["a","b","c","d"],"answer":0},{...},{...}]}. Exatamente 3 perguntas de múltipla escolha, 4 alternativas cada, "answer" = índice (0-3) da correta. As perguntas devem testar compreensão real, não decoreba.`;
     try {
-      const res = await fetch(AI_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1400, system: sys, messages: [{ role: "user", content: "Gere a pílula de hoje." }] }) });
+      const res = await fetch(AI_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1400, system: sys, messages: [{ role: "user", content: "Gere a pílula de hoje." }] }) });
       const data = await res.json();
       let txt = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").replace(/```json|```/g, "").trim();
       const parsed = JSON.parse(txt);
@@ -1284,7 +1284,7 @@ function CheckIn({ state, setState, showToast, goDash }) {
     const sys = `Você é o coach do Giovanni (Gio) no app Ascend. Ele acabou de fazer o check-in noturno. Em português, tom de mentor exigente mas no time dele, gere uma avaliação curtíssima do dia + UMA dica concreta para amanhã. Considere a ambição dele (carreira em PE, EQT/Advent, impacto) e seus pontos cegos (procrastinação, dependência de celular/dopamina). Se ele tinha um plano de ontem, comente se cumpriu. Se o streak bateu um marco, comemore com sobriedade. Responda SOMENTE JSON válido: {"message":"2-3 frases avaliando o dia","tip":"1 frase, uma ação concreta para amanhã"}.
 Dados de hoje — notas por área: ${JSON.stringify(catAvgs)}; energia (1-5, 0=não informou): ${energy}; reflexões: ${JSON.stringify(reflexoes)}; nota livre: ${JSON.stringify((note || "").slice(0, 200))}; plano de ontem: ${JSON.stringify(planoOntem)}; intenção p/ amanhã: ${JSON.stringify(tomorrowPlan.slice(0, 160))}; streak: ${streak} dias${mile ? " (marco: " + mile.label + ")" : ""}.`;
     try {
-      const res = await fetch(AI_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 400, system: sys, messages: [{ role: "user", content: "Avalie meu dia." }] }) });
+      const res = await fetch(AI_ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 400, system: sys, messages: [{ role: "user", content: "Avalie meu dia." }] }) });
       const data = await res.json();
       let txt = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").replace(/```json|```/g, "").trim();
       let parsed; try { parsed = JSON.parse(txt); } catch { parsed = { message: txt || "Dia registrado. Constância é o que constrói.", tip: "Comece amanhã pela tarefa que você mais quer evitar." }; }
@@ -2094,7 +2094,7 @@ Se for só conversa, actions:[]. Nunca confirme progresso sem antes pedir/recebe
     try {
       const res = await fetch(AI_ENDPOINT, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system: sys, messages: history.map((m) => ({ role: m.role, content: m.text })) }),
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 1000, system: sys, messages: history.map((m) => ({ role: m.role, content: m.text })) }),
       });
       const data = await res.json();
       let text = data.content.filter((b) => b.type === "text").map((b) => b.text).join("\n").replace(/```json|```/g, "").trim();
